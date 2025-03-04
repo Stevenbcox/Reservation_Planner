@@ -1,26 +1,22 @@
-// const client = require("./db");
-const pg = require("pg");
-const { createTables } = require("./db");
-
-const client = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "reservation_planner",
-  password: "Password",
-  port: 5432,
-});
+require("dotenv").config();
+const { client, createTables, app } = require("./db");
 
 const init = async () => {
-  console.log("connecting to database");
-  await client.connect();
-  console.log("connected to database");
-  await createTables();
-  console.log("created tables");
+  try {
+    console.log("Connecting to database...");
+    await client.connect();
+    console.log("Connected to database.");
 
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`listening on port ${port}`);
-  });
+    await createTables();
+    console.log("Tables created.");
+
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("Error initializing app:", error);
+  }
 };
 
 init();
